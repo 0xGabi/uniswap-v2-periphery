@@ -43,6 +43,8 @@ contract IncentivisedSlidingWindowOracle {
     uint256 public immutable percentIncentivePerCall;
     address public incentivisedPair;
 
+    event PriceUpdatedForPair(address pair, address tokenA, address tokenB);
+
     // mapping from pair address to a list of price observations of that pair
     mapping(address => Observation[]) public pairObservations;
 
@@ -129,6 +131,8 @@ contract IncentivisedSlidingWindowOracle {
         if (pair == incentivisedPair) {
             incentiveToken.transfer(msg.sender, updateIncentiveAmount());
         }
+
+        emit PriceUpdatedForPair(pair, tokenA, tokenB);
     }
 
     // returns the amount out corresponding to the amount in for a given token using the moving average over the time
@@ -164,5 +168,9 @@ contract IncentivisedSlidingWindowOracle {
             uint224((priceCumulativeEnd - priceCumulativeStart) / timeElapsed)
         );
         amountOut = priceAverage.mul(amountIn).decode144();
+    }
+
+    function getPair(address factory, address tokenA, address tokenB) public returns (address) {
+        return UniswapV2Library.pairFor(factory, tokenA, tokenB);
     }
 }

@@ -78,7 +78,8 @@ module.exports = {
       },
       network_id: 100,
       gas: 10000000,
-      gasPrice: 1000000000
+      gasPrice: 1000000000,
+      skipDryRun: false
     },
     rinkeby: {
       network_id: 4,
