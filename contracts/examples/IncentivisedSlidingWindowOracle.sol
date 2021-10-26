@@ -43,6 +43,9 @@ contract IncentivisedSlidingWindowOracle {
     uint256 public immutable percentIncentivePerCall;
     address public incentivisedPair;
 
+    mapping(address => IERC20) public incentivisedPairsIncentiveToken;
+
+
     event PriceUpdatedForPair(address pair, address tokenA, address tokenB);
 
     // mapping from pair address to a list of price observations of that pair
@@ -129,7 +132,7 @@ contract IncentivisedSlidingWindowOracle {
         observation.price1Cumulative = price1Cumulative;
 
         if (pair == incentivisedPair) {
-            incentiveToken.transfer(msg.sender, updateIncentiveAmount());
+            require(incentiveToken.transfer(msg.sender, updateIncentiveAmount()), "SlidingWindowOracle: INCENTIVE_TRANSFER_FAILED");
         }
 
         emit PriceUpdatedForPair(pair, tokenA, tokenB);
